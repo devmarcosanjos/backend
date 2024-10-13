@@ -1,16 +1,12 @@
-const express = require('express');
-const TaskModel = require('../models/task.model');
+const express = require("express");
 
-const router = express.Router()
+const TaskModel = require("../models/task.model");
+const TaskController = require("../controller/task.controllers");
 
+const router = express.Router();
 
 router.get("/", async (req, res) => {
-  try {
-    const task = await TaskModel.find({});
-    res.status(200).send(task);
-  } catch (error) {
-    res.status(500).send(error.message);
-  }
+  return new TaskController(req, res).getTasks();
 });
 
 router.get("/:id", async (req, res) => {
@@ -79,4 +75,4 @@ router.delete("/:id", async (req, res) => {
   }
 });
 
-module.exports = router
+module.exports = router;
