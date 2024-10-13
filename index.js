@@ -24,9 +24,9 @@ app.get('/tasks/:id', async (req, res) => {
         const taskId = req.params.id
         const task = await TaskModel.findById(taskId);
 
-        if(task) return console.log('ok')
+        // if(task) return console.log('ok')
         
-        res.status(200).send(error.message)
+        res.status(200).send(task)
 
 
     } catch (error) {
@@ -43,6 +43,33 @@ app.post('/tasks', async (req, res) => {
    } catch (error) {
         res.status(500).send(error.message)
    }
+})
+
+app.patch('/tasks/:id', async (req, res) => {
+    try {
+        const taskId = req.params.id
+        const taskData = req.body
+        const taskToUpdate = await TaskModel.findById(taskId)
+        
+        const allowedUpdates = ['isCompleted']
+
+        const requestedUpdates = Object.keys(req.body)
+
+        for (update of requestedUpdates) {
+          if (allowedUpdates.includes(update)) {
+            taskToUpdate[update] = taskData[update];
+          } else {
+            return res.status(500).send('Um ou mais campos não são editaveis.')
+          }
+        }
+
+        await taskToUpdate.save(taskToUpdate)
+
+        return res.status(200).send()
+
+    } catch (error) {
+        res.status(500).send(error.message)
+    }
 })
 
 app.delete('/tasks/:id', async (req, res) => {
